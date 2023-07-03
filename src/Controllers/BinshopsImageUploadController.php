@@ -126,5 +126,39 @@ class BinshopsImageUploadController extends Controller
 
     }
 
+    public function destroy(BinshopsUploadedPhoto $binshopsUploadedPhoto)
+    {
+        $img = $binshopsUploadedPhoto->uploaded_images;
+
+        try {
+            unlink(public_path('blog_images/' . $img->binshopsblog_full_size->filename));
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+        }
+
+        try {
+            unlink(public_path(config("binshopsblog.blog_upload_dir").'/'. $img->image_large->filename));
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+        }
+
+        try {
+            unlink(public_path(config("binshopsblog.blog_upload_dir").'/' . $img->image_medium->filename));
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+        }
+
+        try {
+            unlink(public_path(config("binshopsblog.blog_upload_dir").'/' . $img->image_thumbnail->filename));
+        } catch (\Exception $e) {
+            logger($e->getMessage());
+        }
+
+        $binshopsUploadedPhoto->delete();
+
+        return back();
+
+    }
+
 
 }
